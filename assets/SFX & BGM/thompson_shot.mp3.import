@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b2fwrtfs782i4"
+path="res://.godot/imported/thompson_shot.mp3-d0c609e97bdcf743e6702cdc2c88aeff.mp3str"
+
+[deps]
+
+source_file="res://assets/SFX & BGM/thompson_shot.mp3"
+dest_files=["res://.godot/imported/thompson_shot.mp3-d0c609e97bdcf743e6702cdc2c88aeff.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

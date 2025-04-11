@@ -1,0 +1,308 @@
+[gd_scene load_steps=10 format=3 uid="uid://cqpbyuiblxg4m"]
+
+[ext_resource type="Script" path="res://scripts/loading_screen.gd" id="1_qfnhn"]
+[ext_resource type="FontFile" uid="uid://cxdcn4rqspmli" path="res://assets/PressStart2P-Regular.ttf" id="2_6dnrf"]
+
+[sub_resource type="Shader" id="Shader_eik12"]
+code = "shader_type canvas_item;
+
+uniform float vignette_intensity = 0.4;
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
+uniform vec4 vignette_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float time_scale = 0.2;
+
+float random(vec2 uv) {
+    return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void fragment() {
+    // Base color - dark gradient
+    vec2 centered_uv = UV - vec2(0.5);
+    float dist = length(centered_uv);
+    vec3 color = vec3(0.1, 0.03, 0.03); // Dark reddish base
+    
+    // Add some noise to create texture
+    float noise = random(UV * TIME * 0.1) * 0.03;
+    
+    // Animated blood seeping
+    float blood_wave = sin(TIME * time_scale + UV.x * 10.0) * 0.5 + 0.5;
+    float blood_edge = smoothstep(0.4, 0.8, dist);
+    vec3 blood = mix(vec3(0.0), vec3(0.4, 0.0, 0.0), blood_wave * blood_edge);
+    
+    // Combine everything
+    color += blood + vec3(noise);
+    
+    // Apply vignette
+    float vignette = smoothstep(0.5, 0.35, dist);
+    color = mix(color, vignette_color.rgb, (1.0 - vignette) * vignette_opacity);
+    
+    COLOR = vec4(color, 1.0);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ddlp6"]
+shader = SubResource("Shader_eik12")
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.7
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+shader_parameter/time_scale = 0.1
+
+[sub_resource type="Animation" id="Animation_6urqj"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StatusContainer/LoadingDots:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["."]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TransitionOverlay:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_b0rxe"]
+resource_name = "dots_animation"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("StatusContainer/LoadingDots:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [".", "..", "...", ""]
+}
+
+[sub_resource type="Animation" id="Animation_i225a"]
+resource_name = "fade_in"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_15c5t"]
+resource_name = "transition_out"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TransitionOverlay:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t4c00"]
+_data = {
+"RESET": SubResource("Animation_6urqj"),
+"dots_animation": SubResource("Animation_b0rxe"),
+"fade_in": SubResource("Animation_i225a"),
+"transition_out": SubResource("Animation_15c5t")
+}
+
+[node name="LoadingScreen" type="Control"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qfnhn")
+
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_ddlp6")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ZombieHandsTop" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+grow_horizontal = 2
+
+[node name="ZombieHandsBottom" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="TitleContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -100.0
+offset_right = 300.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.901961, 0.0823529, 0.0823529, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_outline_size = 5
+theme_override_fonts/font = ExtResource("2_6dnrf")
+theme_override_font_sizes/font_size = 40
+text = "UNDEAD SIEGE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LoadingBar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 20.0
+offset_right = 200.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_6dnrf")
+theme_override_font_sizes/font_size = 12
+
+[node name="StatusContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 55.0
+offset_right = 200.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="StatusLabel" type="Label" parent="StatusContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_6dnrf")
+theme_override_font_sizes/font_size = 12
+text = "LOADING"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LoadingDots" type="Label" parent="StatusContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_6dnrf")
+theme_override_font_sizes/font_size = 12
+text = "."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TipContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="TipBackground" type="ColorRect" parent="TipContainer"]
+layout_mode = 2
+color = Color(0, 0, 0, 0.25098)
+
+[node name="MarginContainer" type="MarginContainer" parent="TipContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Tip" type="Label" parent="TipContainer/MarginContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.901961, 0.901961, 0.901961, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("2_6dnrf")
+theme_override_font_sizes/font_size = 8
+text = "TIP: Mystery boxes have a chance to give powerful weapons."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="TransitionOverlay" type="ColorRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "dots_animation"
+libraries = {
+"": SubResource("AnimationLibrary_t4c00")
+}

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BulletStats" load_steps=2 format=3 uid="uid://b66nbilsvtrrk"]
+
+[ext_resource type="Script" path="res://scenes/utils/bullet_stats.gd" id="1_nydsu"]
+
+[resource]
+script = ExtResource("1_nydsu")
+speed = 600
+piercing = 0
+animation_frame = 28
+bullet_damage = 1

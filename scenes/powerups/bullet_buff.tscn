@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://dolqjihfvmvht"]
+
+[ext_resource type="Script" path="res://scripts/interactable.gd" id="1_brgsk"]
+[ext_resource type="Script" path="res://scenes/utils/bullet_strategy/speed_bullet_strategy.gd" id="2_253xq"]
+[ext_resource type="Texture2D" uid="uid://bq7f764p1aj01" path="res://assets/Icons/ability_skill_swords_game_gun_shot_bullet_rifle-512.png" id="3_p1m0x"]
+[ext_resource type="FontFile" uid="uid://cxdcn4rqspmli" path="res://assets/PressStart2P-Regular.ttf" id="4_vlbrs"]
+
+[sub_resource type="Resource" id="Resource_gbktm"]
+script = ExtResource("2_253xq")
+upgrade_name = ""
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rsku6"]
+size = Vector2(219.625, 226.375)
+
+[node name="BulletBuff" type="Node2D"]
+script = ExtResource("1_brgsk")
+upgrade = SubResource("Resource_gbktm")
+cost = 10
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_p1m0x")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_rsku6")
+
+[node name="PromptLabel" type="Label" parent="."]
+visible = false
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
+offset_bottom = -50.0
+theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("4_vlbrs")
+theme_override_font_sizes/font_size = 14
+text = "Upgrade: $10"
+horizontal_alignment = 1
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

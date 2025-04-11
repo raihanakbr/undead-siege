@@ -1,0 +1,92 @@
+[gd_scene load_steps=6 format=3 uid="uid://d0obnuwpabmnc"]
+
+[ext_resource type="Script" path="res://scenes/ui/simple_health_ui.gd" id="1_w3kgm"]
+[ext_resource type="Texture2D" uid="uid://mwywvgdmybfo" path="res://resources/textures/health_icon.tres" id="2_j132d"]
+[ext_resource type="Texture2D" uid="uid://vtv08g4mek30" path="res://resources/textures/health_bar.tres" id="3_vsnj0"]
+[ext_resource type="Texture2D" uid="uid://chik03pwmvk5t" path="res://resources/textures/health_bar_end.tres" id="4_f4jkw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ubd7d"]
+bg_color = Color(0.541176, 0.160784, 0.160784, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="SimpleHealthUI" type="CanvasLayer"]
+script = ExtResource("1_w3kgm")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -40.0
+offset_right = 215.0
+offset_bottom = 40.0
+grow_vertical = 0
+scale = Vector2(2, 2)
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_bottom = 20
+
+[node name="HealthBar" type="ProgressBar" parent="MarginContainer2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 13)
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_ubd7d")
+value = 100.0
+show_percentage = false
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
+offset_right = 212.0
+grow_vertical = 0
+scale = Vector2(2, 2)
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_j132d")
+stretch_mode = 2
+
+[node name="TextureRect2" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_vsnj0")
+stretch_mode = 2
+
+[node name="TextureRect3" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_vsnj0")
+stretch_mode = 2
+
+[node name="TextureRect4" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_vsnj0")
+stretch_mode = 2
+
+[node name="TextureRect5" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_vsnj0")
+stretch_mode = 2
+
+[node name="TextureRect6" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_vsnj0")
+stretch_mode = 2
+
+[node name="TextureRect7" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_vsnj0")
+stretch_mode = 2
+
+[node name="TextureRect8" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("4_f4jkw")
+stretch_mode = 2

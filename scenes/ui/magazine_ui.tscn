@@ -1,0 +1,81 @@
+[gd_scene load_steps=5 format=3 uid="uid://ct0eq42ua5he8"]
+
+[ext_resource type="Script" path="res://scenes/ui/magazine_ui.gd" id="1_lkvnu"]
+[ext_resource type="FontFile" uid="uid://cxdcn4rqspmli" path="res://assets/PressStart2P-Regular.ttf" id="2_u5xlf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mvs7q"]
+bg_color = Color(0.2, 0.2, 0.2, 0.7)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wwdx5"]
+bg_color = Color(0.8, 0.2, 0.2, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="MagazineUI" type="CanvasLayer"]
+script = ExtResource("1_lkvnu")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -100.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mvs7q")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AmmoDisplay" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="MagLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AmmoDisplay"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_u5xlf")
+theme_override_font_sizes/font_size = 24
+text = "6"
+
+[node name="Separator" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AmmoDisplay"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_u5xlf")
+theme_override_font_sizes/font_size = 24
+text = "/"
+
+[node name="TotalAmmoLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AmmoDisplay"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_u5xlf")
+theme_override_font_sizes/font_size = 24
+text = "30"
+
+[node name="ReloadProgressBar" type="ProgressBar" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_wwdx5")
+value = 50.0
+show_percentage = false

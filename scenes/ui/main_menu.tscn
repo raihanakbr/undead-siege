@@ -1,0 +1,380 @@
+[gd_scene load_steps=13 format=3 uid="uid://q1hv1xtatky"]
+
+[ext_resource type="FontFile" uid="uid://cxdcn4rqspmli" path="res://assets/PressStart2P-Regular.ttf" id="1_24h5e"]
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_m67pb"]
+[ext_resource type="Texture2D" uid="uid://6qibotc8kmdw" path="res://assets/ChatGPT Image Apr 11, 2025, 05_05_32 PM.png" id="2_vv2s5"]
+[ext_resource type="AudioStream" uid="uid://c2xqfqkjmtscw" path="res://assets/SFX & BGM/main_game_bgm.mp3" id="4_w044v"]
+
+[sub_resource type="Shader" id="Shader_vtx45"]
+code = "shader_type canvas_item;
+
+uniform float vignette_intensity = 0.4;
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
+uniform vec4 vignette_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float blood_opacity : hint_range(0.0, 1.0) = 0.15;
+uniform float fog_amount : hint_range(0.0, 1.0) = 0.3;
+uniform float time_scale = 0.2;
+
+// Random function
+float random(vec2 uv) {
+    return fract(sin(dot(uv.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+// Noise function
+float noise(vec2 uv) {
+    vec2 i = floor(uv);
+    vec2 f = fract(uv);
+    
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+    
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    
+    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+// Fbm function for fog
+float fbm(vec2 uv) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    float frequency = 3.0;
+    
+    for (int i = 0; i < 5; i++) {
+        value += amplitude * noise(frequency * uv);
+        frequency *= 2.0;
+        amplitude *= 0.5;
+    }
+    
+    return value;
+}
+
+void fragment() {
+    // Original color
+    vec4 color = texture(TEXTURE, UV);
+    
+    // Moving fog effect
+    float fog = fbm(UV + TIME * time_scale);
+    
+    // Vignette effect
+    float dist = length(UV - vec2(0.5));
+    float vignette = smoothstep(0.5, 0.35, dist);
+    
+    // Mix fog with original color
+    color.rgb = mix(color.rgb, vec3(fog * 0.3), fog_amount);
+    
+    // Apply vignette
+    color.rgb = mix(color.rgb, vignette_color.rgb, (1.0 - vignette) * vignette_opacity);
+    
+    // Red blood splatter overlay at edges
+    float blood_effect = smoothstep(0.4, 0.7, dist);
+    color.rgb = mix(color.rgb, vec3(0.5, 0.0, 0.0), blood_effect * blood_opacity);
+    
+    // Add subtle noise grain
+    float noise = random(UV * TIME) * 0.03;
+    color.rgb += noise;
+    
+    COLOR = color;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_svdgj"]
+shader = SubResource("Shader_vtx45")
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.6
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+shader_parameter/blood_opacity = 0.15
+shader_parameter/fog_amount = 0.3
+shader_parameter/time_scale = 0.05
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1eyn8"]
+bg_color = Color(0.152941, 0.0509804, 0.0509804, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.501961, 0, 0, 1)
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jvy4f"]
+bg_color = Color(0.223529, 0.0705882, 0.0705882, 0.929412)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.12549, 0.12549, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_size = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qmsu3"]
+bg_color = Color(0.290196, 0.0941176, 0.0941176, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.803922, 0.164706, 0.164706, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.494118)
+shadow_size = 4
+
+[sub_resource type="Animation" id="Animation_gf06j"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TitleContainer:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 80)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MenuPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TitleContainer:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_abhqc"]
+resource_name = "menu_appear"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TitleContainer:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7, 0.8, 0.9),
+"transitions": PackedFloat32Array(0.287175, 1.86607, 0.574349, 1),
+"update": 0,
+"values": [Vector2(40, -200), Vector2(40, 90), Vector2(40, 78), Vector2(40, 80)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MenuPanel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TitleContainer:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hgftv"]
+_data = {
+"RESET": SubResource("Animation_gf06j"),
+"menu_appear": SubResource("Animation_abhqc")
+}
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m67pb")
+
+[node name="Background" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_svdgj")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_vv2s5")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BloodOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.5, 0, 0, 0.05)
+
+[node name="TitleContainer" type="VBoxContainer" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -480.0
+offset_top = 80.0
+offset_right = 240.0
+offset_bottom = 185.0
+grow_horizontal = 2
+
+[node name="Title" type="Label" parent="TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.901961, 0.0823529, 0.0823529, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_outline_size = 5
+theme_override_fonts/font = ExtResource("1_24h5e")
+theme_override_font_sizes/font_size = 60
+text = "UNDEAD SIEGE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.654902, 0.654902, 0.654902, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.498039)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/shadow_outline_size = 1
+theme_override_fonts/font = ExtResource("1_24h5e")
+theme_override_font_sizes/font_size = 16
+text = "SURVIVE THE HORDES"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MenuPanel" type="PanelContainer" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = 60.0
+offset_right = 150.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1eyn8")
+
+[node name="MarginContainer" type="MarginContainer" parent="MenuPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 30
+
+[node name="MenuButtons" type="VBoxContainer" parent="MenuPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PlayButton" type="Button" parent="MenuPanel/MarginContainer/MenuButtons"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../QuitButton")
+theme_override_colors/font_hover_color = Color(1, 0.807843, 0.172549, 1)
+theme_override_colors/font_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_fonts/font = ExtResource("1_24h5e")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_jvy4f")
+theme_override_styles/normal = SubResource("StyleBoxFlat_qmsu3")
+text = "PLAY"
+
+[node name="CreditsButton" type="Button" parent="MenuPanel/MarginContainer/MenuButtons"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(1, 0.807843, 0.172549, 1)
+theme_override_colors/font_color = Color(0.85098, 0.85098, 0.85098, 1)
+theme_override_fonts/font = ExtResource("1_24h5e")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_jvy4f")
+theme_override_styles/normal = SubResource("StyleBoxFlat_qmsu3")
+text = "CREDITS"
+
+[node name="HSeparator" type="HSeparator" parent="MenuPanel/MarginContainer/MenuButtons"]
+layout_mode = 2
+
+[node name="QuitButton" type="Button" parent="MenuPanel/MarginContainer/MenuButtons"]
+layout_mode = 2
+focus_neighbor_bottom = NodePath("../PlayButton")
+theme_override_colors/font_hover_color = Color(0.980392, 0.392157, 0.392157, 1)
+theme_override_colors/font_color = Color(0.717647, 0.333333, 0.333333, 1)
+theme_override_fonts/font = ExtResource("1_24h5e")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_jvy4f")
+theme_override_styles/normal = SubResource("StyleBoxFlat_qmsu3")
+text = "QUIT GAME"
+
+[node name="Version" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -109.0
+offset_top = -23.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.678431, 0.678431, 0.678431, 0.682353)
+theme_override_fonts/font = ExtResource("1_24h5e")
+theme_override_font_sizes/font_size = 8
+text = "v0.1.0 ALPHA"
+horizontal_alignment = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_hgftv")
+}
+autoplay = "menu_appear"
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_w044v")
+autoplay = true
+
+[connection signal="pressed" from="MenuPanel/MarginContainer/MenuButtons/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="MenuPanel/MarginContainer/MenuButtons/CreditsButton" to="." method="_on_credits_button_pressed"]
+[connection signal="pressed" from="MenuPanel/MarginContainer/MenuButtons/QuitButton" to="." method="_on_quit_button_pressed"]

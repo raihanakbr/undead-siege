@@ -1,0 +1,369 @@
+[gd_scene load_steps=9 format=3 uid="uid://gp0pyblsf7km"]
+
+[ext_resource type="FontFile" uid="uid://cxdcn4rqspmli" path="res://assets/PressStart2P-Regular.ttf" id="1_st8l3"]
+[ext_resource type="Script" path="res://scripts/death_screen.gd" id="2_jrc5m"]
+
+[sub_resource type="Shader" id="Shader_hkx85"]
+code = "shader_type canvas_item;
+
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
+uniform float vignette_intensity = 0.4;
+uniform float vignette_opacity : hint_range(0.0, 1.0) = 0.5;
+uniform vec4 vignette_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float blood_opacity : hint_range(0.0, 1.0) = 0.2;
+
+float random(vec2 uv) {
+    return fract(sin(dot(uv.xy,
+        vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+void fragment() {
+    vec2 uv = SCREEN_UV;
+    vec4 color = texture(screen_texture, uv);
+    
+    // Vignette effect
+    float dist = length(uv - vec2(0.5));
+    float vignette = smoothstep(0.5, 0.35, dist);
+    color.rgb = mix(color.rgb, vignette_color.rgb, (1.0 - vignette) * vignette_opacity);
+    
+    // Add noise grain
+    float noise = random(uv * TIME) * 0.1;
+    color.rgb += noise * 0.03;
+    
+    // Red blood splatter overlay at edges
+    float blood_effect = smoothstep(0.4, 0.7, dist);
+    color.rgb = mix(color.rgb, vec3(0.5, 0.0, 0.0), blood_effect * blood_opacity);
+    
+    COLOR = color;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_27w3c"]
+shader = SubResource("Shader_hkx85")
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.5
+shader_parameter/vignette_color = Color(0, 0, 0, 1)
+shader_parameter/blood_opacity = 0.2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cmfi3"]
+bg_color = Color(0.25, 0.25, 0.25, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.501961, 0, 0, 1)
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.411765)
+shadow_size = 6
+
+[sub_resource type="Animation" id="Animation_qglty"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BloodOverlay:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CenterContainer:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ShaderOverlay:material:shader_parameter/blood_opacity")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.2]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("GameOverText:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 0, 0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("GameOverText:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1.5, 1.5)]
+}
+
+[sub_resource type="Animation" id="Animation_7i5fk"]
+resource_name = "fade_in"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BloodOverlay:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.5),
+"transitions": PackedFloat32Array(1, 0.5, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.6), Color(1, 1, 1, 0.4)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CenterContainer:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ShaderOverlay:material:shader_parameter/blood_opacity")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1.5),
+"transitions": PackedFloat32Array(2.82843, 1),
+"update": 0,
+"values": [0.0, 0.2]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("GameOverText:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.4, 1),
+"transitions": PackedFloat32Array(1, 0.5, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 0), Color(1, 0, 0, 0), Color(1, 0, 0, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("GameOverText:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.4, 0.7, 0.8, 0.9),
+"transitions": PackedFloat32Array(0.5, 2, 0.5, 1),
+"update": 0,
+"values": [Vector2(1.5, 1.5), Vector2(1, 1), Vector2(1.1, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p8nt5"]
+_data = {
+"RESET": SubResource("Animation_qglty"),
+"fade_in": SubResource("Animation_7i5fk")
+}
+
+[node name="DeathScreen" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+script = ExtResource("2_jrc5m")
+
+[node name="ShaderOverlay" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_27w3c")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BloodOverlay" type="ColorRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.5, 0, 0, 0.15)
+
+[node name="GameOverText" type="Label" parent="."]
+modulate = Color(1, 0, 0, 0)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -155.0
+offset_top = 100.0
+offset_right = 155.0
+offset_bottom = 139.0
+grow_horizontal = 2
+scale = Vector2(1.5, 1.5)
+pivot_offset = Vector2(155, 20)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_outline_size = 2
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 36
+text = "YOU DIED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(576, 324)
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(500, 400)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cmfi3")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StatsLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.498039)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 14
+text = "SIEGE SUMMARY"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="StatsContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="WaveReached" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer/WaveReached"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 12
+text = "WAVE REACHED:"
+
+[node name="Value" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer/WaveReached"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 12
+text = "0"
+horizontal_alignment = 2
+
+[node name="ZombiesKilled" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer/ZombiesKilled"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 12
+text = "ZOMBIES SLAIN:"
+
+[node name="Value" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer/ZombiesKilled"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 12
+text = "0"
+horizontal_alignment = 2
+
+[node name="MoneyCollected" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer/MoneyCollected"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.8, 0.2, 1)
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 12
+text = "MONEY COLLECTED:"
+
+[node name="Value" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StatsContainer/MoneyCollected"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 12
+text = "$0"
+horizontal_alignment = 2
+
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RestartButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.2, 1, 0.2, 1)
+theme_override_colors/font_color = Color(0.12549, 0.698039, 0.12549, 1)
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 14
+text = "TRY AGAIN"
+
+[node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_st8l3")
+theme_override_font_sizes/font_size = 14
+text = "QUIT GAME"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_p8nt5")
+}
+
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer/RestartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer/QuitButton" to="." method="_on_quit_button_pressed"]

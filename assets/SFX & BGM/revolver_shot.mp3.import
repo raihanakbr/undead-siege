@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://qfnyrbr0o8ww"
+path="res://.godot/imported/revolver_shot.mp3-114c9af2dcb4a427e3731ea28693a64b.mp3str"
+
+[deps]
+
+source_file="res://assets/SFX & BGM/revolver_shot.mp3"
+dest_files=["res://.godot/imported/revolver_shot.mp3-114c9af2dcb4a427e3731ea28693a64b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

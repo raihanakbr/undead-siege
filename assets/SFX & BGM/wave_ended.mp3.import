@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://d4eefg500sk8c"
+path="res://.godot/imported/wave_ended.mp3-db821af99cda470e9339301ba884f61c.mp3str"
+
+[deps]
+
+source_file="res://assets/SFX & BGM/wave_ended.mp3"
+dest_files=["res://.godot/imported/wave_ended.mp3-db821af99cda470e9339301ba884f61c.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

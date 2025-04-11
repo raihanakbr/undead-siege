@@ -1,0 +1,121 @@
+[gd_scene load_steps=17 format=3 uid="uid://cnti1tyakq4m"]
+
+[ext_resource type="Script" path="res://scenes/guns/rocket_launcher.gd" id="1_2yhu1"]
+[ext_resource type="Texture2D" uid="uid://dinwebhy0eftc" path="res://assets/AnimationSheets/Weaonns_Sprites_32x32/RocketLauncher_Shoot.png" id="2_6hyyw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6cf4x"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(352, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q2n8w"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k70nq"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rw1of"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvtve"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v25iy"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2ojj"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6af6j"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_senl8"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26hr1"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pfdyt"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(288, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rybto"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(320, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_btj16"]
+atlas = ExtResource("2_6hyyw")
+region = Rect2(352, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1op0p"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6cf4x")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q2n8w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k70nq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rw1of")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qvtve")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v25iy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h2ojj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6af6j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_senl8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26hr1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pfdyt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rybto")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_btj16")
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 15.0
+}]
+
+[node name="RocketLauncher" type="Node2D"]
+script = ExtResource("1_2yhu1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(7, -1)
+sprite_frames = SubResource("SpriteFrames_1op0p")
+animation = &"shoot"
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(23, 0)
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

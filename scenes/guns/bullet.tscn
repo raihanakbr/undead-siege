@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://dm3bd8mhjbehq"]
+
+[ext_resource type="Script" path="res://scenes/guns/bullet.gd" id="1_rtouj"]
+[ext_resource type="Texture2D" uid="uid://dj5pi74ecodbp" path="res://assets/SpriteSheets/items & bullets sprites(16x16).png" id="2_8v1x7"]
+[ext_resource type="Resource" uid="uid://qwwp28kle3t0" path="res://resources/bullets/pistol_stats.tres" id="2_a1krk"]
+[ext_resource type="Script" path="res://scenes/utils/hit_box.gd" id="3_p21lh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8mp8y"]
+size = Vector2(10, 7)
+
+[node name="Bullet" type="Node2D"]
+script = ExtResource("1_rtouj")
+stats = ExtResource("2_a1krk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_8v1x7")
+hframes = 5
+vframes = 7
+frame = 26
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-15, -15, 30, 30)
+
+[node name="HitBox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("3_p21lh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_8mp8y")
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
+[connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]
