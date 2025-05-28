@@ -28,3 +28,12 @@ func _on_hit_box_area_entered(area: Area2D) -> void:
 			piercing -= 1
 		else:
 			queue_free()
+
+func _on_hit_box_body_entered(body: Node2D) -> void:
+	if body.is_in_group("Walls"):
+		queue_free()
+
+func disable_wall_collision() -> void:
+	hitbox.set_collision_layer_value(5, false)
+	hitbox.set_collision_mask_value(5, false)
+	

@@ -22,8 +22,8 @@ frame = 26
 rect = Rect2(-15, -15, 30, 30)
 
 [node name="HitBox" type="Area2D" parent="."]
-collision_layer = 2
-collision_mask = 2
+collision_layer = 18
+collision_mask = 18
 script = ExtResource("3_p21lh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
@@ -32,3 +32,4 @@ shape = SubResource("RectangleShape2D_8mp8y")
 
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
 [connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]
+[connection signal="body_entered" from="HitBox" to="." method="_on_hit_box_body_entered"]

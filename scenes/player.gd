@@ -10,6 +10,7 @@ const SPEED = 300.0
 @onready var weapon_holder = $WeaponHolder
 @onready var health = $Health
 @onready var hurtbox = $HurtBox
+@onready var cheat_code_timer: Timer = $CheatCodeTimer
 
 @export var weapon_scenes = {
 	"pistol": preload("res://scenes/guns/pistol.tscn"),
@@ -23,6 +24,10 @@ var is_hurt = false
 var knockback_velocity = Vector2.ZERO
 var is_dead = false
 var current_gun
+
+# Cheat code variables
+var cheat_sequence = "12345"
+var typed_sequence = ""
 
 func _ready() -> void:
 	hurtbox.connect("knockback_applied", _on_knockback_applied)
@@ -80,7 +85,26 @@ func _input(event):
 	if event.is_action_pressed("interact"):
 		print("interact")
 		player_interact.emit(self)
+	
+	# Handle cheat code input
+	if event is InputEventKey and event.pressed:
+		var key_char = char(event.unicode)
+		cheat_code_timer.start()
 		
+		# Process both numbers and letters
+		if key_char.length() == 1 and (key_char >= "0" and key_char <= "9"):
+			typed_sequence += key_char
+			
+			# Keep only the last characters up to cheat sequence length
+			if typed_sequence.length() > cheat_sequence.length():
+				typed_sequence = typed_sequence.substr(-cheat_sequence.length())
+			
+			# Check if cheat code was entered
+			if typed_sequence == cheat_sequence:
+				health.set_to_full_health()
+				print("CHEAT ACTIVTED")
+				typed_sequence = ""  # Reset sequence
+
 func equip_weapon(weapon):
 	
 	# Now remove old weapons
@@ -185,3 +209,14 @@ func play_start_bgm():
 func play_end_bgm():
 	$MainBGM.stop()
 	$RelaxBGM.play()
+
+func activate_health_cheat():
+	if health and health.has_method("heal"):
+		health.heal(health.max_health)  # Restore to full health
+		print("Cheat activated: Full health restored!")
+	elif health and "current_health" in health and "max_health" in health:
+		health.current_health = health.max_health
+		print("Cheat activated: Full health restored!")
+
+func _on_cheat_code_timer_timeout() -> void:
+	typed_sequence = ""

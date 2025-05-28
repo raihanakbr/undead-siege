@@ -63,3 +63,6 @@ func set_health(value: int) -> void:
 	
 func get_health() -> int:
 	return health
+	
+func set_to_full_health() -> void:
+	set_health(get_max_health())

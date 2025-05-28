@@ -11,6 +11,7 @@ func apply_upgrade(bullet: Bullet):
 	
 	# Apply a subtle yellow tint to the bullet itself
 	bullet.modulate = Color(1.2, 1.2, 0.8)  # Subtle yellow glow
+	bullet.disable_wall_collision()
 
 # Inner class that handles all effects with its own process method
 class PiercingEffect extends Node2D:

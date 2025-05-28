@@ -23,6 +23,7 @@ window/size/viewport_height=540
 [global_group]
 
 player=""
+Walls=""
 
 [input]
 
