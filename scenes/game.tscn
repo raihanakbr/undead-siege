@@ -980,7 +980,6 @@ tile_map_data = PackedByteArray("AAAAAA4AAAABABAAAAABAA4AAAACABAAAAAAAA8AAAAEABA
 tile_set = SubResource("TileSet_o7vag")
 
 [node name="MysteryBox" parent="." instance=ExtResource("5_yr88k")]
-visible = false
 position = Vector2(4994, 3718)
 cost = 200
 
